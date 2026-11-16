@@ -9,7 +9,11 @@ import org.example.auth_service.dto.UserResponse;
 import org.example.auth_service.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,8 +33,18 @@ public class authController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request){
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
 
+    @GetMapping("/me")
+    public Map<String, Object> getCurrentUser(
+            @AuthenticationPrincipal Jwt jwt) {
 
+        return Map.of(
+                "userId", jwt.getClaim("userId"),
+                "email", jwt.getSubject(),
+                "role", jwt.getClaim("role"),
+                "message", "JWT validation successful"
+        );
     }
 
 }

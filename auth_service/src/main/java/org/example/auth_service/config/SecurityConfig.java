@@ -26,7 +26,10 @@ public class SecurityConfig {
                                    "/api/auth/login"
                 ).permitAll()
                 .anyRequest().authenticated()
-        );
+        )
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt -> {})
+                );
         return http.build();
     }
 }

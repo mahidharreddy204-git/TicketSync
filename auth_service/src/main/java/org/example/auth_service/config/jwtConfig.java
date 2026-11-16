@@ -6,8 +6,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -75,5 +74,19 @@ public class jwtConfig {
                 );
 
         return new NimbusJwtEncoder(jwkSource);
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() throws Exception{
+         NimbusJwtDecoder decoder =NimbusJwtDecoder
+                .withPublicKey(loadPublicKey())
+                .build();
+
+        decoder.setJwtValidator(
+                JwtValidators.createDefaultWithIssuer(
+                        "ticketsync-auth-service"
+                )
+        );
+        return decoder;
     }
 }
